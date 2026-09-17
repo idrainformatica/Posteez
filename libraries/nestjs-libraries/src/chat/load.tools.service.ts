@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Agent } from '@mastra/core/agent';
-import { openai } from '@ai-sdk/openai';
+import { createOpenAI } from '@ai-sdk/openai';
 import { Memory } from '@mastra/memory';
 import { pStore } from '@gitroom/nestjs-libraries/chat/mastra.store';
 import { array, object, string } from 'zod';
@@ -10,6 +10,9 @@ import type { FollowerPageContext } from '@gitroom/nestjs-libraries/integrations
 import type { HelpPageContext } from '@gitroom/nestjs-libraries/help/help.types';
 import { resolveChannelStrategy } from '@gitroom/nestjs-libraries/channel-strategies/channel-strategy.registry';
 import dayjs from 'dayjs';
+import { openAIBaseUrl, openAIModel } from '@gitroom/nestjs-libraries/openai/openai.config';
+
+const openai = createOpenAI({ baseURL: openAIBaseUrl() });
 
 export const AgentState = object({
   proverbs: array(string()).default([]),
@@ -380,7 +383,7 @@ export class LoadToolsService {
       )}
 `;
       },
-      model: openai('gpt-5.2'),
+      model: openai(openAIModel('gpt-5.2')),
       tools,
       memory: new Memory({
         storage: pStore,

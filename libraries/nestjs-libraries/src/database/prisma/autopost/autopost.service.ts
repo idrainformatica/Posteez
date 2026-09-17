@@ -21,6 +21,7 @@ import { TemporalService } from 'nestjs-temporal-core';
 import { TypedSearchAttributes } from '@temporalio/common';
 import { organizationId } from '@gitroom/nestjs-libraries/temporal/temporal.search.attribute';
 import { PipelineManager } from '@gitroom/nestjs-libraries/database/prisma/pipelines/pipeline.manager';
+import { openAIBaseUrl, openAIModel } from '@gitroom/nestjs-libraries/openai/openai.config';
 const parser = new Parser();
 
 interface WorkflowChannelsState {
@@ -39,7 +40,8 @@ interface WorkflowChannelsState {
 
 const model = new ChatOpenAI({
   apiKey: process.env.OPENAI_API_KEY || 'sk-proj-',
-  model: 'gpt-4.1',
+  configuration: { baseURL: openAIBaseUrl() },
+  model: openAIModel('gpt-4.1'),
   temperature: 0.7,
 });
 

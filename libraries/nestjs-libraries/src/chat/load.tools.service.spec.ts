@@ -9,7 +9,7 @@ jest.mock('@mastra/core/agent', () => ({
 }));
 
 jest.mock('@ai-sdk/openai', () => ({
-  openai: jest.fn(),
+  createOpenAI: jest.fn(() => jest.fn()),
 }));
 
 jest.mock('@mastra/memory', () => ({

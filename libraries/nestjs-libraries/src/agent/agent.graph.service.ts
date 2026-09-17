@@ -16,6 +16,7 @@ import { MediaService } from '@gitroom/nestjs-libraries/database/prisma/media/me
 import { UploadFactory } from '@gitroom/nestjs-libraries/upload/upload.factory';
 import { GeneratorDto } from '@gitroom/nestjs-libraries/dtos/generator/generator.dto';
 import { generationError } from '@gitroom/nestjs-libraries/openai/generation.error';
+import { openAIBaseUrl, openAIModel } from '@gitroom/nestjs-libraries/openai/openai.config';
 
 const tools = !process.env.TAVILY_API_KEY
   ? []
@@ -24,7 +25,8 @@ const toolNode = new ToolNode(tools);
 
 const model = new ChatOpenAI({
   apiKey: process.env.OPENAI_API_KEY || 'sk-proj-',
-  model: 'gpt-4.1',
+  configuration: { baseURL: openAIBaseUrl() },
+  model: openAIModel('gpt-4.1'),
   temperature: 0.7,
 });
 

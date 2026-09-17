@@ -13,7 +13,12 @@ import {
   OpenAIAdapter,
   copilotRuntimeNodeHttpEndpoint,
 } from '@copilotkit/runtime';
+import OpenAI from 'openai';
 import { GetOrgFromRequest } from '@gitroom/nestjs-libraries/user/org.from.request';
+import {
+  openAIBaseUrl,
+  openAIModel,
+} from '@gitroom/nestjs-libraries/openai/openai.config';
 import { Organization, User } from '@prisma/client';
 import { GetUserFromRequest } from '@gitroom/nestjs-libraries/user/user.from.request';
 import { SubscriptionService } from '@gitroom/nestjs-libraries/database/prisma/subscriptions/subscription.service';
@@ -257,7 +262,11 @@ export class CopilotController {
       endpoint: '/copilot/chat',
       runtime: await this.createRuntime(req, organization, user),
       serviceAdapter: new OpenAIAdapter({
-        model: 'gpt-4.1',
+        openai: new OpenAI({
+          apiKey: process.env.OPENAI_API_KEY || 'sk-proj-',
+          baseURL: openAIBaseUrl(),
+        }),
+        model: openAIModel('gpt-4.1'),
       }),
     });
 
@@ -281,7 +290,11 @@ export class CopilotController {
       endpoint: '/copilot/agent',
       runtime: await this.createRuntime(req, organization, user),
       serviceAdapter: new OpenAIAdapter({
-        model: 'gpt-4.1',
+        openai: new OpenAI({
+          apiKey: process.env.OPENAI_API_KEY || 'sk-proj-',
+          baseURL: openAIBaseUrl(),
+        }),
+        model: openAIModel('gpt-4.1'),
       }),
     });
 

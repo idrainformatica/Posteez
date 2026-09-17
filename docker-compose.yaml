@@ -115,6 +115,8 @@ services:
 
       # === Misc Settings
       OPENAI_API_KEY: ''
+      OPENAI_BASE_URL: ''
+      OPENAI_MODEL: ''
       GIPHY_API_KEY: ''
       IMGFLIP_USERNAME: ''
       IMGFLIP_PASSWORD: ''

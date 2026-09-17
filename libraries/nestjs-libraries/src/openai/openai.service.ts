@@ -6,8 +6,14 @@ import { toFile } from 'openai/uploads';
 import { z } from 'zod';
 import sharp from 'sharp';
 import { LEAD_FIT_VERSION } from '@gitroom/nestjs-libraries/temporal/lead-bridge.schedule';
+import { openAIBaseUrl, openAIModel } from './openai.config';
 
 const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY || 'sk-proj-',
+  baseURL: openAIBaseUrl(),
+});
+
+const openaiImages = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || 'sk-proj-',
 });
 
@@ -149,7 +155,7 @@ export class OpenaiService {
     // `response_format` parameter, unlike the deprecated dall-e-3.
     if (!referenceImagePaths.length) {
       const generate = (
-        await openai.images.generate({
+        await openaiImages.images.generate({
           prompt,
           model: 'chatgpt-image-latest',
           size: isVertical ? '1024x1536' : '1024x1024',
@@ -165,7 +171,7 @@ export class OpenaiService {
       )
     );
     const edit = (
-      await openai.images.edit({
+      await openaiImages.images.edit({
         image: images,
         prompt,
         model: 'chatgpt-image-latest',
@@ -180,7 +186,7 @@ export class OpenaiService {
     return (
       (
         await openai.chat.completions.parse({
-          model: 'gpt-4.1',
+          model: openAIModel('gpt-4.1'),
           messages: [
             {
               role: 'system',
@@ -201,7 +207,7 @@ export class OpenaiService {
     return (
       (
         await openai.chat.completions.parse({
-          model: 'gpt-4.1',
+          model: openAIModel('gpt-4.1'),
           messages: [
             {
               role: 'system',
@@ -235,7 +241,7 @@ export class OpenaiService {
           ],
           n: 5,
           temperature: 1,
-          model: 'gpt-4.1',
+          model: openAIModel('gpt-4.1'),
         }),
         openai.chat.completions.create({
           messages: [
@@ -251,7 +257,7 @@ export class OpenaiService {
           ],
           n: 5,
           temperature: 1,
-          model: 'gpt-4.1',
+          model: openAIModel('gpt-4.1'),
         }),
       ])
     ).flatMap((p) => p.choices);
@@ -289,7 +295,7 @@ export class OpenaiService {
           content,
         },
       ],
-      model: 'gpt-4.1',
+      model: openAIModel('gpt-4.1'),
     });
 
     const { content: articleContent } = websiteContent.choices[0].message;
@@ -309,7 +315,7 @@ export class OpenaiService {
     const posts =
       (
         await openai.chat.completions.parse({
-          model: 'gpt-4.1',
+          model: openAIModel('gpt-4.1'),
           messages: [
             {
               role: 'system',
@@ -342,7 +348,7 @@ export class OpenaiService {
               return (
                 (
                   await openai.chat.completions.parse({
-                    model: 'gpt-4.1',
+                    model: openAIModel('gpt-4.1'),
                     messages: [
                       {
                         role: 'system',
@@ -378,7 +384,7 @@ export class OpenaiService {
         const parse =
           (
             await openai.chat.completions.parse({
-              model: 'gpt-4.1',
+              model: openAIModel('gpt-4.1'),
               messages: [
                 {
                   role: 'system',
@@ -416,7 +422,7 @@ export class OpenaiService {
 
   async generateAltText(imageUrl: string) {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4.1',
+      model: openAIModel('gpt-4.1'),
       messages: [
         {
           role: 'system',
@@ -452,7 +458,7 @@ export class OpenaiService {
   async rerankTriageCandidates(input: TriageRerankInput) {
     const parsed = (
       await openai.chat.completions.parse({
-        model: 'gpt-4.1',
+        model: openAIModel('gpt-4.1'),
         messages: [
           {
             role: 'system',
@@ -528,7 +534,7 @@ Do not infer private traits. Omit candidates when deferral or no engagement is a
 
     const parsed = (
       await openai.chat.completions.parse({
-        model: 'gpt-4.1',
+        model: openAIModel('gpt-4.1'),
         messages: [
           {
             role: 'system',
@@ -575,7 +581,7 @@ If channel documents are missing, score conservatively from general profile qual
         .map((item) => item.trim())
         .filter(Boolean)
         .slice(0, 8),
-      model: 'gpt-4.1',
+      model: openAIModel('gpt-4.1'),
       version: LEAD_FIT_VERSION,
     };
   }
