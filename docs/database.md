@@ -45,11 +45,11 @@ Post++ containers do not change the database schema during application startup. 
 
 ### Fresh Database
 
-Start PostgreSQL, pull the target Post++ image, and run the migration container before starting Post++:
+Start PostgreSQL, build the Post++ image, and run the migration container before starting Post++:
 
 ```bash
 docker compose up -d postiz-postgres
-docker compose pull postiz
+docker compose build postiz
 docker compose run --rm --no-deps postiz pnpm run prisma-migrate-deploy
 docker compose up -d postiz
 ```
@@ -61,7 +61,7 @@ The migration command uses the `DATABASE_URL` configured for the `postiz` Compos
 Do this one-time adoption before enabling an automated deployment that runs `prisma migrate deploy`.
 
 1. Stop Post++ writes and take a tested PostgreSQL backup. Keep the previous image and backup available; Prisma migrations do not provide an automatic rollback.
-2. Pull the target image and verify the database schema against the migration SQL and the Prisma schema in that exact image. Identify which migrations are already fully reflected in the database. Do not infer adoption from a Prisma error code.
+2. Build the target image (`docker compose build postiz`) and verify the database schema against the migration SQL and the Prisma schema in that exact image. Identify which migrations are already fully reflected in the database. Do not infer adoption from a Prisma error code.
 3. Mark the generated baseline as applied only when every object in the historical pre-`20260812120000_channel_interactions` schema has been verified. Verify later objects separately in the next step:
 
 ```bash
@@ -118,13 +118,7 @@ Start or recreate Post++ only after it succeeds. If verification or migration fa
 
 Never automate `migrate resolve` for an unknown or merely populated database.
 
-The manual GitHub Action **Adopt Prisma baseline** runs the six historical `--applied` resolves above, then `migrate deploy`, then recreates Post++. It only starts if you type this confirmation string exactly:
-
-```text
-I have a tested backup and verified the existing database schema matches the v1.4.5 migrations
-```
-
-It does not run on tag pushes or regular Deploy jobs. Do not use it unless you have already completed the backup and schema verification steps.
+Run the one-time adoption manually on the VPS: execute the six historical `--applied` resolves above, then `docker compose run --rm --no-deps postiz pnpm run prisma-migrate-deploy`, then recreate Post++ with `docker compose up -d postiz`. Do this only after completing the backup and schema verification steps.
 
 ## Data Model Hotspots
 

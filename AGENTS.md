@@ -113,11 +113,7 @@ Prettier across the repo.
 
 - Use only pnpm.
 - Never use RAW SQL queries, always use Prisma.
-- The system is in production with many users, if you want to change something, you need to be sure that you are not breaking anything for existing users and a migration might be needed
 - Whenever you generate a PR, PR description, or similar, **always** follow the PR Template (.github/PULL_REQUEST_TEMPLATE.md)
 - Avoid as much as possible creating new files with pure logic of algorithms, it's usually wrong
 - When you write code, make sure that what you add looks like something similar somewhere else in the code, don't make weird patterns
-- When you finished running, run another agents that matches the new code with the existing system code, to see that it looks similar and is not a weird pattern.
-- Workflows files can never be changed if they are already in origin/main, because changing a workflow will fail all its activities, instead create a new workflow with the version, and everywhere the workflow being called, change it to the new workflow version.
-- Workflows activities parameters cannot be changed, as it will break the workflow, if we need to change the parameters, if we need to change the parameters, we need to create a new activity with the new parameters, and then create a new workflow that uses the new activity.
 - Code must always be generic, there can't be a way that a specific logic, let's say facebook or instagram, appear in a file that use a generic logic, instead, we need to edit the interface of the provider, add another function, and then generically call it from the generic code, and then implement the specific logic in the provider implementation. we can't have something like if(facebookProvider) {} inside a non facebook provider file.

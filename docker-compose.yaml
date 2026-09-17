@@ -1,13 +1,19 @@
 services:
   postiz:
-    image: ghcr.io/headzoo/postiz-app:latest
+    image: postiz-app:local
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        NEXT_PUBLIC_VERSION: local
     container_name: postiz
     restart: always
     environment:
       # === Required Settings
-      MAIN_URL: 'http://localhost:4007'
-      FRONTEND_URL: 'http://localhost:4007'
-      NEXT_PUBLIC_BACKEND_URL: 'http://localhost:4007/api'
+      MAIN_URL: 'https://social.idrainformatica.it'
+      FRONTEND_URL: 'https://social.idrainformatica.it'
+      NEXT_PUBLIC_BACKEND_URL: 'https://social.idrainformatica.it/api'
+      NOT_SECURED: false
       JWT_SECRET: 'random string that is unique to every install - just type random characters here!'
       DATABASE_URL: 'postgresql://postiz-user:postiz-password@postiz-postgres:5432/postiz-db-local'
       REDIS_URL: 'redis://postiz-redis:6379'
@@ -15,53 +21,48 @@ services:
       TEMPORAL_ADDRESS: 'temporal:7233'
       IS_GENERAL: 'true'
       DISABLE_REGISTRATION: 'false'
+      RUN_CRON: 'true'
 
-      # === Storage Settings
-      STORAGE_PROVIDER: 'cloudflare'
+      # === Storage Settings (invariato: local, come nel tuo Postiz attuale)
+      STORAGE_PROVIDER: 'local'
       UPLOAD_DIRECTORY: '/uploads'
       NEXT_PUBLIC_UPLOAD_DIRECTORY: '/uploads'
 
-      # === File Channel (Optional)
-      # Leave disabled unless this deployment needs text-file output.
+      # === File Channel (feature nuova di postplusplus - disabilitata di default)
       # FILE_CHANNEL_DIRECTORY: '/file-channel'
-      # Mount a writable host or named volume at this exact path. Every worker
-      # serving the `file` queue must use the same mount.
 
-      # === Publish File Sink (Optional, local/dev)
-      # When set to an absolute path, orchestrator skips provider APIs and writes
-      # prepared post/comment/status payloads as JSON files instead.
+      # === Publish File Sink (feature nuova di postplusplus - disabilitata di default)
       # PUBLISH_FILE_SINK_DIR: '/publish-file-sink'
 
-      # === Incoming Webhook File Log (Optional)
-      # When set to an absolute path, each inbound channel webhook is written as
-      # raw JSON before validation. Contains full payloads and signatures.
-      # Mount a writable volume at this exact path when enabled.
-      # Unmatched multi-tenant deliveries are not stored in the DB logs; they
-      # appear here when this sink is enabled.
+      # === Incoming Webhook File Log (feature nuova di postplusplus)
       INCOMING_WEBHOOK_LOG_DIR: 'incoming-webhook-logs'
 
-      # === Cloudflare (R2) Settings
-      CLOUDFLARE_ACCOUNT_ID: xx
-      CLOUDFLARE_ACCESS_KEY: xx
-      CLOUDFLARE_SECRET_ACCESS_KEY: xxx
-      CLOUDFLARE_BUCKETNAME: img-discimg-com
-      CLOUDFLARE_BUCKET_URL: https://img.discimg.com
-      CLOUDFLARE_REGION: auto
+      # === Cloudflare (R2) Settings - non usato, resta su storage 'local'
+      # CLOUDFLARE_ACCOUNT_ID: ''
+      # CLOUDFLARE_ACCESS_KEY: ''
+      # CLOUDFLARE_SECRET_ACCESS_KEY: ''
+      # CLOUDFLARE_BUCKETNAME: ''
+      # CLOUDFLARE_BUCKET_URL: ''
+      # CLOUDFLARE_REGION: 'auto'
+
+      #=== MAIL
+      EMAIL_PROVIDER: "nodemailer"
+      EMAIL_HOST: "smtp.gmail.com"
+      EMAIL_PORT: "465"
+      EMAIL_SECURE: "true"
+      EMAIL_USER: ""
+      EMAIL_PASS: ""
+      EMAIL_FROM_NAME: "Postiz Emailer"
+      EMAIL_FROM_ADDRESS: ""
 
       # === Social Media API Settings
       X_URL: ''
       X_API_KEY: ''
       X_API_SECRET: ''
-      # Optional X Account Activity webhooks. Tracking remains disabled when
-      # either the HTTPS callback or app-only bearer token is absent.
       X_WEBHOOK_BEARER_TOKEN: ''
-      # Like tracking additionally needs an OAuth2 grant with the like.read
-      # scope; allow <X_URL or FRONTEND_URL>/integrations/tracking/x as an X app
-      # callback URL.
       X_OAUTH2_CLIENT_ID: ''
       X_OAUTH2_CLIENT_SECRET: ''
-      X_WEBHOOK_CALLBACK_URL: 'https://postiz.backtunnel.io/api/channel-webhooks/x'
-      # Alternatively set a shared base; Postiz appends /channel-webhooks/x.
+      X_WEBHOOK_CALLBACK_URL: ''
       CHANNEL_WEBHOOK_CALLBACK_BASE_URL: ''
       LINKEDIN_CLIENT_ID: ''
       LINKEDIN_CLIENT_SECRET: ''
@@ -94,7 +95,8 @@ services:
       MASTODON_URL: 'https://mastodon.social'
       MASTODON_CLIENT_ID: ''
       MASTODON_CLIENT_SECRET: ''
-      FILE_CHANNEL_DIRECTORY: '/home/sean/postiv'
+      GOOGLE_GMB_CLIENT_ID: ''
+      GOOGLE_GMB_CLIENT_SECRET: ''
 
       # === OAuth & Authentik Settings
       # NEXT_PUBLIC_POSTIZ_OAUTH_DISPLAY_NAME: 'Authentik'
@@ -106,17 +108,14 @@ services:
       # POSTIZ_OAUTH_USERINFO_URL: 'https://authentik.example.com/application/o/userinfo'
       # POSTIZ_OAUTH_CLIENT_ID: ''
       # POSTIZ_OAUTH_CLIENT_SECRET: ''
-      # POSTIZ_OAUTH_SCOPE: "openid profile email"  # Optional: uncomment to override default scope
+      # POSTIZ_OAUTH_SCOPE: "openid profile email"
 
       # === Sentry
-
       # NEXT_PUBLIC_SENTRY_DSN: 'http://spotlight:8969/stream'
       # SENTRY_SPOTLIGHT: '1'
 
       # === Misc Settings
       OPENAI_API_KEY: ''
-      OPENAI_BASE_URL: ''
-      OPENAI_MODEL: ''
       GIPHY_API_KEY: ''
       IMGFLIP_USERNAME: ''
       IMGFLIP_PASSWORD: ''
@@ -134,27 +133,20 @@ services:
       # === Developer Settings
       NX_ADD_PLUGINS: false
 
-      # === Short Link Service Settings (Optional - leave blank if unused)
-      # DUB_TOKEN: ""
-      # DUB_API_ENDPOINT: "https://api.dub.co"
-      # DUB_SHORT_LINK_DOMAIN: "dub.sh"
-      # SHORT_IO_SECRET_KEY: ""
-      # KUTT_API_KEY: ""
-      # KUTT_API_ENDPOINT: "https://kutt.it/api/v2"
-      # KUTT_SHORT_LINK_DOMAIN: "kutt.it"
-      # LINK_DRIP_API_KEY: ""
-      # LINK_DRIP_API_ENDPOINT: "https://api.linkdrip.com/v1/"
-      # LINK_DRIP_SHORT_LINK_DOMAIN: "dripl.ink"
-
     volumes:
       - postiz-config:/config/
       - postiz-uploads:/uploads/
-
     ports:
-      - '4007:5000'
+      - "4007:5000"
     networks:
       - postiz-network
       - temporal-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "const r=require('http').get('http://localhost:5000/',res=>process.exit(res.statusCode<500?0:1));r.on('error',()=>process.exit(1));r.setTimeout(4000,()=>{r.destroy();process.exit(1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
     depends_on:
       postiz-postgres:
         condition: service_healthy
@@ -162,18 +154,6 @@ services:
         condition: service_healthy
       temporal:
         condition: service_healthy
-    healthcheck:
-      test:
-        [
-          'CMD',
-          'node',
-          '-e',
-          "fetch('http://localhost:5000').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 120s
 
   postiz-postgres:
     image: postgres:17-alpine
@@ -188,19 +168,22 @@ services:
     networks:
       - postiz-network
     healthcheck:
-      test: pg_isready -U postiz-user -d postiz-db-local
+      test: ["CMD-SHELL", "pg_isready -U postiz-user -d postiz-db-local"]
       interval: 10s
-      timeout: 3s
-      retries: 3
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   postiz-redis:
     image: redis:7.2
     container_name: postiz-redis
     restart: always
     healthcheck:
-      test: redis-cli ping
+      test: ["CMD-SHELL", "redis-cli ping | grep -q PONG"]
       interval: 10s
-      timeout: 3s
-      retries: 3
+      timeout: 5s
+      retries: 5
+      start_period: 5s
     volumes:
       - postiz-redis-data:/data
     networks:
@@ -208,10 +191,12 @@ services:
 
   # For Application Monitoring / Debugging
   spotlight:
+    profiles: [debug]
     pull_policy: always
     container_name: spotlight
+    restart: unless-stopped
     ports:
-      - 8969:8969/tcp
+      - 127.0.0.1:8969:8969/tcp
     image: ghcr.io/getsentry/spotlight:latest
     networks:
       - postiz-network
@@ -222,6 +207,7 @@ services:
   temporal-elasticsearch:
     container_name: temporal-elasticsearch
     image: elasticsearch:7.17.27
+    restart: always
     environment:
       - cluster.routing.allocation.disk.threshold_enabled=true
       - cluster.routing.allocation.disk.watermark.low=512mb
@@ -234,22 +220,19 @@ services:
       - temporal-network
     expose:
       - 9200
-    volumes:
-      - /var/lib/elasticsearch/data
     healthcheck:
-      test:
-        [
-          'CMD-SHELL',
-          "curl -sf 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s'",
-        ]
+      test: ["CMD-SHELL", "curl -fsS \"http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s\" || exit 1"]
       interval: 10s
       timeout: 10s
-      retries: 5
-      start_period: 30s
+      retries: 10
+      start_period: 60s
+    volumes:
+      - temporal-elasticsearch-data:/usr/share/elasticsearch/data
 
   temporal-postgresql:
     container_name: temporal-postgresql
     image: postgres:16
+    restart: always
     environment:
       POSTGRES_PASSWORD: temporal
       POSTGRES_USER: temporal
@@ -257,18 +240,20 @@ services:
       - temporal-network
     expose:
       - 5432
-    volumes:
-      - /var/lib/postgresql/data
     healthcheck:
-      test: pg_isready -U temporal
+      test: ["CMD-SHELL", "pg_isready -U temporal"]
       interval: 10s
-      timeout: 3s
-      retries: 3
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - temporal-postgres-data:/var/lib/postgresql/data
 
   temporal:
     container_name: temporal
+    restart: always
     ports:
-      - '7233:7233'
+      - '127.0.0.1:7233:7233'
     image: temporalio/auto-setup:1.28.1
     depends_on:
       temporal-postgresql:
@@ -288,29 +273,21 @@ services:
       - TEMPORAL_NAMESPACE=default
     networks:
       - temporal-network
+    healthcheck:
+      test: ["CMD", "temporal", "operator", "cluster", "health", "--address", "temporal:7233"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     volumes:
       - ./dynamicconfig:/etc/temporal/config/dynamicconfig
     labels:
       kompose.volume.type: configMap
-    healthcheck:
-      test:
-        [
-          'CMD',
-          'temporal',
-          'operator',
-          'cluster',
-          'health',
-          '--address',
-          'temporal:7233',
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 60s
 
   temporal-admin-tools:
     container_name: temporal-admin-tools
     image: temporalio/admin-tools:1.28.1-tctl-1.18.4-cli-1.4.1
+    restart: on-failure
     environment:
       - TEMPORAL_ADDRESS=temporal:7233
       - TEMPORAL_CLI_ADDRESS=temporal:7233
@@ -325,13 +302,20 @@ services:
   temporal-ui:
     container_name: temporal-ui
     image: temporalio/ui:2.34.0
+    restart: always
     environment:
       - TEMPORAL_ADDRESS=temporal:7233
       - TEMPORAL_CORS_ORIGINS=http://127.0.0.1:3000
     networks:
       - temporal-network
     ports:
-      - '8080:8080'
+      - '127.0.0.1:8080:8080'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     depends_on:
       temporal:
         condition: service_healthy
@@ -339,14 +323,15 @@ services:
 volumes:
   postgres-volume:
     external: false
-
   postiz-redis-data:
     external: false
-
   postiz-config:
     external: false
-
   postiz-uploads:
+    external: false
+  temporal-postgres-data:
+    external: false
+  temporal-elasticsearch-data:
     external: false
 
 networks:
