@@ -55,6 +55,42 @@ Targeted builds are also available:
 
 Targeted dev scripts are available for backend, frontend, and orchestrator when you do not need the full stack.
 
+## Local Docker Testing
+
+`docker-compose.yaml` runs the `postiz` service from the published image (`ghcr.io/headzoo/postiz-app:latest`). To exercise local code changes against the full Compose stack, create an untracked `docker-compose.override.yaml` in the repository root (the file is gitignored, and plain `docker compose` commands merge it automatically):
+
+```yaml
+services:
+  postiz:
+    image: postiz-app:local
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        NEXT_PUBLIC_VERSION: local
+```
+
+Build and start the stack with:
+
+```bash
+docker compose build
+docker compose run --rm --no-deps postiz pnpm run prisma-migrate-deploy
+docker compose up -d --wait
+```
+
+Run the `prisma-migrate-deploy` step whenever the change set ships Prisma migrations; application containers never migrate the database at startup (see [Database](/database)). The app is then reachable on `http://localhost:4007`, and the Temporal UI on `http://localhost:8080`.
+
+`pnpm run docker-build` is a shortcut for `docker compose build postiz`.
+
+To go back to the published image, remove or rename `docker-compose.override.yaml`, then:
+
+```bash
+docker compose pull postiz
+docker compose up -d postiz
+```
+
+Never commit `docker-compose.override.yaml`: the VPS deployment runs plain `docker compose pull postiz`, and the override would make that pull fail.
+
 ## CI Notes
 
 The main build workflow uses Node `22.12.0` and PNPM. Keep docs CI aligned with that runtime because the root package engine requires Node `>=22.12.0 <23.0.0`.

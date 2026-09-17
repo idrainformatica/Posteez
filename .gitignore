@@ -70,3 +70,4 @@ docs/.vitepress/static
 graphify-out
 .eslintcache-backend
 .eslintcache-frontend
+docker-compose.override.yaml
