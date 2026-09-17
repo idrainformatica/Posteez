@@ -13,6 +13,7 @@ import {
   OpenAIAdapter,
   copilotRuntimeNodeHttpEndpoint,
 } from '@copilotkit/runtime';
+import type { OpenAIAdapterParams } from '@copilotkit/runtime';
 import OpenAI from 'openai';
 import { GetOrgFromRequest } from '@gitroom/nestjs-libraries/user/org.from.request';
 import {
@@ -265,7 +266,7 @@ export class CopilotController {
         openai: new OpenAI({
           apiKey: process.env.OPENAI_API_KEY || 'sk-proj-',
           baseURL: openAIBaseUrl(),
-        }),
+        }) as unknown as OpenAIAdapterParams['openai'],
         model: openAIModel('gpt-4.1'),
       }),
     });
@@ -293,7 +294,7 @@ export class CopilotController {
         openai: new OpenAI({
           apiKey: process.env.OPENAI_API_KEY || 'sk-proj-',
           baseURL: openAIBaseUrl(),
-        }),
+        }) as unknown as OpenAIAdapterParams['openai'],
         model: openAIModel('gpt-4.1'),
       }),
     });
