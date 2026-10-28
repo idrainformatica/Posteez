@@ -75,6 +75,8 @@ On the VPS Docker runs as root, so the same flow runs under `sudo`. `pnpm run do
 
 The `spotlight` debugging service is gated behind the `debug` Compose profile: start it explicitly with `docker compose --profile debug up -d spotlight`.
 
+The production deployment and its recovery runbooks live in [Troubleshooting](/troubleshooting).
+
 ## Deployment-Sensitive Areas
 
 Review these areas carefully before merging:

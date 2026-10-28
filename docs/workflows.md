@@ -67,3 +67,6 @@ Recurring workflows may sleep and loop, as in `autoPostWorkflow`. Treat these as
 - Avoid importing non-deterministic Node APIs into workflow code.
 - Move side effects into activities.
 - Use services/repositories from activities, not workflows.
+## Worker Boot Dependency
+
+The orchestrator boot awaits `waitForTemporal()` from `libraries/nestjs-libraries/src/temporal/temporal.module.ts` before creating the Nest application. The gate opens a real client connection and calls `describeNamespace` until Temporal accepts connections, so workers are never registered while the Temporal server is still starting after a host reboot. The failure mode this prevents, and the recovery procedure, are documented in [Troubleshooting](/troubleshooting).

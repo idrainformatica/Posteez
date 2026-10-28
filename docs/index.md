@@ -15,6 +15,7 @@ Use this site as a map before editing code:
 - [Database](/database) covers Prisma schema, migrations, and repository ownership.
 - [Frontend API Clients](/frontend-api) covers the SWR and `useFetch` patterns used by the React app.
 - [Operations](/operations) covers common root-level commands and deployment-sensitive checks.
+- [Troubleshooting](/troubleshooting) covers the production deployment and recovery runbooks for background jobs.
 
 ## Repository Map
 

@@ -1,6 +1,7 @@
 const register = jest.fn((options) => ({ options }));
 const registerAsync = jest.fn((options) => ({ options }));
 const bundleWorkflowCode = jest.fn();
+const connect = jest.fn();
 
 jest.mock('nestjs-temporal-core', () => ({
   TemporalModule: {
@@ -13,6 +14,12 @@ jest.mock('@temporalio/worker', () => ({
   bundleWorkflowCode,
 }));
 
+jest.mock('@temporalio/client', () => ({
+  Connection: {
+    connect,
+  },
+}));
+
 jest.mock('@gitroom/nestjs-libraries/integrations/integration.manager', () => ({
   socialIntegrationList: [
     { identifier: 'x', maxConcurrentJob: 10 },
@@ -22,7 +29,7 @@ jest.mock('@gitroom/nestjs-libraries/integrations/integration.manager', () => ({
   ],
 }));
 
-import { getTemporalModule } from './temporal.module';
+import { getTemporalModule, waitForTemporal } from './temporal.module';
 
 const originalEnvironment = { ...process.env };
 
@@ -34,6 +41,11 @@ const getWorkerOptions = async () => {
   return module.options.useFactory();
 };
 
+const makeConnection = () => ({
+  workflowService: { describeNamespace: jest.fn().mockResolvedValue({}) },
+  close: jest.fn().mockResolvedValue(undefined),
+});
+
 describe('getTemporalModule', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -41,6 +53,8 @@ describe('getTemporalModule', () => {
     delete process.env.TEMPORAL_WORKER_MODE;
     delete process.env.EXCLUDE_QUEUE;
     delete process.env.WORKER_CONCURRENCY_DIVIDER;
+    delete process.env.TEMPORAL_GATE_TIMEOUT_MS;
+    delete process.env.TEMPORAL_GATE_RETRY_DELAY_MS;
     bundleWorkflowCode.mockResolvedValue({ code: 'workflow-bundle' });
   });
 
@@ -109,5 +123,34 @@ describe('getTemporalModule', () => {
     ).toMatchObject({
       workerOptions: { maxConcurrentActivityTaskExecutions: 1000000 },
     });
+  });
+
+  it('resolves as soon as temporal accepts real connections', async () => {
+    connect.mockResolvedValue(makeConnection());
+
+    await waitForTemporal();
+
+    expect(connect).toHaveBeenCalledWith(
+      expect.objectContaining({ address: 'localhost:7233' })
+    );
+  });
+
+  it('keeps retrying until temporal accepts connections', async () => {
+    process.env.TEMPORAL_GATE_RETRY_DELAY_MS = '10';
+    connect
+      .mockRejectedValueOnce(new Error('connection refused'))
+      .mockResolvedValueOnce(makeConnection());
+
+    await waitForTemporal();
+
+    expect(connect).toHaveBeenCalledTimes(2);
+  });
+
+  it('throws when temporal stays unreachable', async () => {
+    process.env.TEMPORAL_GATE_TIMEOUT_MS = '50';
+    process.env.TEMPORAL_GATE_RETRY_DELAY_MS = '10';
+    connect.mockRejectedValue(new Error('connection refused'));
+
+    await expect(waitForTemporal()).rejects.toThrow('not reachable');
   });
 });

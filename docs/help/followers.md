@@ -19,12 +19,12 @@ Only channels that expose follower identities show in the left sidebar—not eve
 ## Browse, search, and sort
 
 1. Select a channel in the left list.
-2. On **All**, review the summary cards and board columns (**Leads**, **Hot**, **Mutual**, **Cultivate**, **Followed**, **Conversions**, **Quiet**, **Costly**, **Ignored**, **Unfollowed**, **Bots**). Each column lists people in that segment (scroll within a column when needed); **View all** opens the full card grid for that segment.
+2. On **All**, review the summary cards and board columns (**Leads**, **Hot**, **Mutual**, **Cultivate**, **Followed**, **Conversions**, **Quiet**, **Costly**, **Ignored**, **Unfollowed**, **Bots**). Each column lists people in that segment (scroll within a column when needed); **View all** opens the full card grid for that segment. On the board you can **drag a person into another column** to move them. You cannot drop into **Leads**, **Followed**, or **Unfollowed**. Dragging into **Hot** or **Cultivate** pins them as manually added so the hourly refresh keeps them there.
 3. Use **Search** for username or display name (searching on All switches from the board to the card grid).
 4. Open **Filters** for **Sort by**, **Direction**, **Time window** (**Week**, **Month**, **90 Day**, **Year**), and **Per page** (12 / 24 / 48).
 5. On a filtered tab or after **View all**, move with **Previous** / **Next**.
 
-**Sort by** options depend on the channel (for example **Recent**, **Interactions**, **Notes**, **Likes**, **Priority grade**, **Your grade**, **Bot grade**, **Their effort**, **Net effort gap**). Some sorts only reorder the **current page**—prefer **Recent** when you need consistent order across pages.
+**Sort by** options depend on the channel (for example **Recent**, **Interactions**, **Notes**, **Likes**, **Relationship health**, **Your grade**, **Bot grade**, **Their effort**, **Net effort gap**). Some sorts only reorder the **current page**—prefer **Recent** when you need consistent order across pages.
 
 Empty search: **No followers match this search**.
 
@@ -55,15 +55,15 @@ Summary cards show counts for **All Followers**, **Leads**, **Mutual**, **Hot**,
 
 ### Hot
 
-Hot refreshes about once per hour with a bounded set of relationships that need reciprocation. Ordering comes from the latest completed hourly batch, so new picks can take up to an hour to appear after activity changes. Cards may show a reason and suggested action from rules or optional AI reranking—rules-only reasons are not labeled as AI-generated. Dismissing Hot removes the card immediately even though the underlying pick row may remain until the next batch.
+Hot refreshes about once an hour with a bounded set of relationships that need reciprocation. Ordering comes from the latest completed hourly batch, so new picks can take up to an hour to appear after activity changes. Cards may show a reason and suggested action from rules or optional AI reranking—rules-only reasons are not labeled as AI-generated. Dismissing Hot removes the card immediately even though the underlying pick row may remain until the next batch. People you drag into Hot are marked **manually added** and stay through hourly refreshes until you dismiss or move them elsewhere.
 
 ### Leads
 
-Leads are people who interact but may not follow you yet (including “Via @handle” bridges). Cards can show a **Fit** score. Newest leads appear first (including people you add manually). Click the **Lead** badge to follow them through the channel (when supported), move them to a custom list, remove them with a reason, or snooze for 7 days. Use the Leads column **⋮** menu or the **+ Add** button on the Leads tab to paste a profile URL and add someone manually. Dismissing removes them from the Leads view when that filter is active. Empty: **No leads on this channel**.
+Leads are people who interact but may not follow you yet (including “Via @handle” bridges). Cards can show a **Fit** score. Newest leads appear first (including people you add manually). Click the **Lead** badge to follow them through the channel (when supported), move them to a custom list, remove them with a reason, or snooze for 7 days. Use the Leads column **⋮** menu or the **+ Add** button on the Leads tab to paste a profile URL and add someone manually. Dismissing removes them from the Leads view when that filter is active. You cannot drop someone into the Leads column from the board. Empty: **No leads on this channel**.
 
 ### Cultivate
 
-Cultivate highlights warm relationships that need a nudge. You’ll see a reason and suggested action chips. Empty: **No cultivate picks right now**.
+Cultivate highlights warm relationships that need a nudge. You’ll see a reason and suggested action chips. Dragging someone into Cultivate pins them as **manually added** so the hourly job keeps them. Empty: **No cultivate picks right now**.
 
 ## Bots and Ignored
 
@@ -74,7 +74,7 @@ Cultivate highlights warm relationships that need a nudge. You’ll see a reason
 
 1. Click **+** to create a list (**List name** → **Okay**).
 2. Select the list chip to view its members.
-3. Use **+ Add** to paste a profile URL into the list, or use a card’s **+** menu to toggle membership.
+3. Use **+ Add** to paste a profile URL into the list, or use a card’s **+** menu to add someone to a list. Click a list badge on a card (or in follower details) to remove them from that list—you'll get a confirmation first.
 
 Empty list: **No followers in this list**. Opening a custom list clears triage/audience filters.
 
@@ -84,9 +84,12 @@ Click a card to open **Follower details**:
 
 - Profile and bot classification
 - **Their effort** / **Your effort** (refreshable)
+- Computed **Relationship grade** and reciprocity history
 - **Your grade** (interactive stars)
 - Notes (add, edit, delete)
 - Recent interactions and optional charts
+
+The computed **Relationship grade** measures the health of the relationship through mutuality, not total activity volume. Completely one-sided effort is 1 star; balanced effort is 5 stars; no tracked activity has no grade. Read **Their effort**, **Your effort**, and the net gap separately to understand how much activity produced that health grade.
 
 ## Timeline
 
@@ -127,7 +130,7 @@ Explicit URL routes (`/followers/leads`, `/followers/cultivate`, and similar), c
 
 ### Recomputing grades
 
-After you change strategy in Settings, relationship grades recompute asynchronously. On Followers you may see **Relationship grades are being recomputed for this strategy. Existing grades remain visible until the update finishes.** Prior grades stay on cards until each person is updated with the new strategy keys.
+After you change strategy in Settings, relationship grades recompute asynchronously. On Followers you may see **Relationship health is being recomputed. Legacy priority grades are marked until each follower's health grade is ready.** The **Relationship health** sort includes only followers whose health grade is current; other sorts keep followers available during the update.
 
 To return to shipped defaults, re-select **Grow audience** in Settings.
 

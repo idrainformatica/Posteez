@@ -21,7 +21,8 @@ In-app: _Schedule recurring posting slots for a fixed set of channels. Queue con
 1. Click **Create Pipeline**.
 2. Set **Pipeline name**, **Timezone**, **Pipeline color**, and **Channels**.
 3. Optionally attach [context documents](/help/docs#use-with-pipelines).
-4. **Save** — toast **Pipeline created successfully**.
+4. Optionally attach up to **three reference images** from your [media library](/help/media) (images only, not videos).
+5. **Save** — toast **Pipeline created successfully**.
 
 Creating a Pipeline does **not** add weekly slots yet. Open the card’s **Schedule** button (detail page) to configure times.
 
@@ -54,11 +55,13 @@ There is no “add blank item” button on the Queue panel itself; content enter
 On the Pipeline detail **Queue**:
 
 - Drag or use ↑↓ to reorder; **Shuffle** randomizes order.
-- Menu: **Edit**, **Now**, **Schedule**, **Remove**, **Delete**, and **Move to…** (only Pipelines with the **same channel set**).
-- Statuses include queued, publishing, and failed; non-queued items appear under **Publishing and failed**.
+- Menu: **Edit**, **Now**, **Schedule**, **Copy to**, **Remove**, **Delete**, and **Move to…** (only Pipelines with the **same channel set**).
+- **Copy to** opens a modal to pick another Pipeline with the same channels. The post is **cloned** into that Pipeline’s queue (end of queue → next projected slot). The original stays put.
+- Statuses include queued, publishing, published, and failed; non-queued items appear under **Publishing and failed**.
+- For **published** items, **Edit**, **Now**, and **Schedule** stay available. **Schedule** clones the content into a new queue entry at the **end of the queue** for the next projected Pipeline slot; the original published item stays in Pipeline history. **Now** publishes immediately and removes the item from Pipeline history. **Remove** and **Delete** stay unavailable for published history.
 - Cards show **Pipeline time:** for the projected slot.
 
-**Remove** takes the item out of the Pipeline but keeps posts as drafts. **Delete** soft-deletes the channel posts. **Publish now** detaches and publishes immediately.
+**Remove** takes the item out of the Pipeline but keeps posts as drafts. **Delete** soft-deletes the channel posts. **Publish now** detaches and publishes immediately. Drag a projected item onto the calendar to pin it to an exact time (detaches from the Pipeline). Scheduling a published item clones it back into the queue for the next available recurring slot while keeping the published history entry.
 
 ## Pipeline autopost
 
@@ -88,3 +91,11 @@ That overview is different from each card’s **Schedule** button, which opens o
 ## Context documents
 
 Optional Markdown from [Context](/help/docs) helps agents draft for this Pipeline. Assignments reference the library (not copies). Skills cannot be attached—deselect them before saving.
+
+## Reference images
+
+Optional images from your organization **media library** (up to three per Pipeline). They are not copied—assignments point at existing media rows.
+
+When the agent generates an image with this Pipeline as context, Post++ automatically uses these references to guide style and branding. Ask explicitly for something **off brand** if you want prompt-only generation instead.
+
+On the Pipeline list, attached images appear as compact thumbnails on each card. On the detail page, the **Reference images** panel shows the full set. Edit the Pipeline to add, remove, or replace images. You cannot attach a fourth image from the picker.

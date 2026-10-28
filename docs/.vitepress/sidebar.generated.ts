@@ -260,6 +260,10 @@ export const sidebar: DefaultTheme.SidebarItem[] =
       {
         "text": "Scheduling Patterns",
         "link": "/workflows#scheduling-patterns"
+      },
+      {
+        "text": "Worker Boot Dependency",
+        "link": "/workflows#worker-boot-dependency"
       }
     ],
     "collapsed": false
@@ -358,12 +362,8 @@ export const sidebar: DefaultTheme.SidebarItem[] =
         "link": "/operations#development-processes"
       },
       {
-        "text": "CI Notes",
-        "link": "/operations#ci-notes"
-      },
-      {
-        "text": "GitHub Pages Setup",
-        "link": "/operations#github-pages-setup"
+        "text": "Docker Builds And Deployment",
+        "link": "/operations#docker-builds-and-deployment"
       },
       {
         "text": "Deployment-Sensitive Areas",
@@ -375,6 +375,37 @@ export const sidebar: DefaultTheme.SidebarItem[] =
           }
         ],
         "collapsed": false
+      }
+    ],
+    "collapsed": false
+  },
+  {
+    "text": "Troubleshooting",
+    "link": "/troubleshooting",
+    "items": [
+      {
+        "text": "Production Deployment",
+        "link": "/troubleshooting#production-deployment"
+      },
+      {
+        "text": "Health Checks",
+        "link": "/troubleshooting#health-checks"
+      },
+      {
+        "text": "Scheduled Posts Are Not Publishing",
+        "link": "/troubleshooting#scheduled-posts-are-not-publishing"
+      },
+      {
+        "text": "Clean Orchestrator Restart",
+        "link": "/troubleshooting#clean-orchestrator-restart"
+      },
+      {
+        "text": "Post-Reboot Checklist",
+        "link": "/troubleshooting#post-reboot-checklist"
+      },
+      {
+        "text": "Useful Commands",
+        "link": "/troubleshooting#useful-commands"
       }
     ],
     "collapsed": false

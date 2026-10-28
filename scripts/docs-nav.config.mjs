@@ -57,6 +57,12 @@ export const docsNav = [
   },
   { kind: 'page', slug: 'operations', title: 'Operations', maxDepth: 3 },
   {
+    kind: 'page',
+    slug: 'troubleshooting',
+    title: 'Troubleshooting',
+    maxDepth: 3,
+  },
+  {
     kind: 'group',
     slug: 'help',
     title: 'Help',

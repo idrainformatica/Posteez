@@ -6,11 +6,13 @@ import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 
 import { NestFactory } from '@nestjs/core';
+import { waitForTemporal } from '@gitroom/nestjs-libraries/temporal/temporal.module';
 import { AppModule } from '@gitroom/orchestrator/app.module';
 import * as dns from 'node:dns';
 dns.setDefaultResultOrder('ipv4first');
 
 async function bootstrap() {
+  await waitForTemporal();
   const app = await NestFactory.create(AppModule);
   app.enableShutdownHooks();
   const port = process.env.ORCHESTRATOR_PORT || 3002;
