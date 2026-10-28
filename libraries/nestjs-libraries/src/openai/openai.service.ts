@@ -6,7 +6,11 @@ import { toFile } from 'openai/uploads';
 import { z } from 'zod';
 import sharp from 'sharp';
 import { LEAD_FIT_VERSION } from '@gitroom/nestjs-libraries/temporal/lead-bridge.schedule';
-import { openAIBaseUrl, openAIModel } from './openai.config';
+import {
+  openAIBaseUrl,
+  openAIModel,
+  openAIVisionModel,
+} from './openai.config';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || 'sk-proj-',
@@ -435,7 +439,7 @@ export class OpenaiService {
   async generateAltText(imageUrl: string) {
     const imageDataUrl = await this.toImageDataUrl(imageUrl);
     const response = await openai.chat.completions.create({
-      model: openAIModel('gpt-4.1'),
+      model: openAIVisionModel('gpt-4.1'),
       messages: [
         {
           role: 'system',
