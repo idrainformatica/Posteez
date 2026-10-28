@@ -420,7 +420,20 @@ export class OpenaiService {
     return [];
   }
 
+  private async toImageDataUrl(path: string) {
+    if (path.startsWith('data:')) {
+      return path;
+    }
+
+    const buffer = await this.downloadReferenceImage(path);
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const detected = await require('file-type').fromBuffer(buffer);
+    const mime = detected?.mime || 'image/png';
+    return `data:${mime};base64,${buffer.toString('base64')}`;
+  }
+
   async generateAltText(imageUrl: string) {
+    const imageDataUrl = await this.toImageDataUrl(imageUrl);
     const response = await openai.chat.completions.create({
       model: openAIModel('gpt-4.1'),
       messages: [
@@ -438,7 +451,7 @@ export class OpenaiService {
             },
             {
               type: 'image_url',
-              image_url: { url: imageUrl },
+              image_url: { url: imageDataUrl },
             },
           ],
         },
